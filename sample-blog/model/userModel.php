@@ -41,10 +41,14 @@ class UserModel
 				$res = $stmt->fetch(PDO::FETCH_ASSOC);
 
 				if (!$res) {
-					return "aucun utilisateur trouvé avec cet e-mail : {$email}";
+					// return "aucun utilisateur trouvé avec cet e-mail : {$email}";
+					return "email";
 				}
 				if (!password_verify($password, $res['password'])) {
-					return "mot de passe incorrect";
+					return "password";
+					// return false;
+
+					// return "mot de passe incorrect";
 				}
 
 				unset($res['password']);

@@ -12,11 +12,9 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Home from "./components/Home";
 import Footer from "./components/Footer";
 import About from "./components/About";
-
+import "./app.css";
 const App = () => {
-  const {isLoading, isError, error } = useSelector(
-    (state) => state.posts
-  );
+  const { isLoading, isError, error } = useSelector((state) => state.posts);
 
   const dispatch = useDispatch();
 
