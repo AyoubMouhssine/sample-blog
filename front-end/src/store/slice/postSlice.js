@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-
-const ENDPOINT = "http://sample-blog/api";
+import { ENDPOINT } from "../../constants";
 
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
   const response = await fetch(`${ENDPOINT}/posts`);
@@ -11,11 +10,18 @@ const postSlice = createSlice({
   name: "posts",
   initialState: {
     posts: [],
+    filteredPosts: [],
     isLoading: false,
     isError: false,
     error: "",
   },
-  reducers: {},
+  reducers: {
+    filterPosts(state, { payload }) {
+      state.filteredPosts = state.posts.filter((post) =>
+        post.title.toLowerCase().includes(payload.toLowerCase())
+      );
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchPosts.pending, (state, action) => {
@@ -26,10 +32,11 @@ const postSlice = createSlice({
         state.isLoading = false;
       })
       .addCase(fetchPosts.rejected, (state, action) => {
+        state.isLoading = false;
         state.isError = true;
-        state.error = "error fetching data for the endpoint";
+        state.error = "error fetching data from the endpoint";
       });
   },
 });
-
+export const { filterPosts } = postSlice.actions;
 export default postSlice;

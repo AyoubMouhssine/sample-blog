@@ -8,13 +8,18 @@ import Dashboard from "./components/Dashboard";
 import Login from "./components/Login";
 import ShowPost from "./components/ShowPost";
 import Header from "./components/Header";
-import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Home from "./components/Home";
+import Footer from "./components/Footer";
+import About from "./components/About";
+
 const App = () => {
-  const { posts, isLoading, isError, error } = useSelector(
+  const {isLoading, isError, error } = useSelector(
     (state) => state.posts
   );
 
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(fetchPosts());
   }, [dispatch]);
@@ -26,16 +31,21 @@ const App = () => {
   return (
     <div>
       <Header />
-      <Routes>
-        <Route path="/">
-          <Route index element={<Posts />} />
-          <Route path="post/:id" element={<ShowPost />} />
-        </Route>
-        <Route path="/admin" element={<Admin />}>
-          <Route index element={<Login />} />
-          <Route path="dashboard" element={<Dashboard />} />
-        </Route>
-      </Routes>
+      <div className="container mt-2 py-3">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/posts">
+            <Route index element={<Posts />} />
+            <Route path=":id" element={<ShowPost />} />
+          </Route>
+          <Route path="/admin" element={<Admin />}>
+            <Route index element={<Login />} />
+            <Route path="dashboard" element={<Dashboard />} />
+          </Route>
+        </Routes>
+      </div>
+      <Footer />
     </div>
   );
 };

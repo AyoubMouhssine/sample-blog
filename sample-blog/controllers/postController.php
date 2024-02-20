@@ -20,9 +20,9 @@ class PostController
         echo json_encode(PostModel::show($id));
     }
 
-    static public function store($title, $content)
+    static public function store($title, $content, $language, $code)
     {
-        echo json_encode(PostModel::store($title, $content));
+        echo json_encode(PostModel::store($title, $content, $language, $code));
     }
 
     static public function delete($id)
