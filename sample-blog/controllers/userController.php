@@ -27,8 +27,18 @@ class UserController
 		echo json_encode(UserModel::show($email, $password));
 	}
 
-	static public function store($nom, $prenom, $email, $password)
+	static public function store($username, $email, $password)
 	{
-		echo json_encode(UserModel::store($nom, $prenom, $email, $password));
+		echo json_encode(UserModel::store($username, $email, $password));
+	}
+
+	static function update($id, $username, $email, $password)
+	{
+		echo json_encode(UserModel::update($id, $username, $email, $password));
+	}
+
+	static function delete($id)
+	{
+		echo json_encode(UserModel::delete($id));
 	}
 }

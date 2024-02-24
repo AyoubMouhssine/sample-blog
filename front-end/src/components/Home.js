@@ -39,7 +39,7 @@ const Home = () => {
             today!
           </p>
           <p>
-            <Link href="/posts" className="btn btn-primary">
+            <Link to="/posts" className="btn btn-primary">
               View Posts
             </Link>
           </p>

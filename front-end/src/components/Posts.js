@@ -6,6 +6,7 @@ const Posts = () => {
   const { posts, filteredPosts } = useSelector((state) => state.posts);
 
   const list = !filteredPosts.length ? posts : filteredPosts;
+
   return (
     <div className="d-flex gap-3">
       {typeof list === "object"

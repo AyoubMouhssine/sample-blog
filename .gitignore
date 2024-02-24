@@ -27,3 +27,4 @@ yarn-error.log*
 # Ignore sensitive files
 /sample-blog/config/config.php
 /sample-blog/.htaccess
+/sample-blog/sample_blog.sql

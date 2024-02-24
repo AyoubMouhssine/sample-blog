@@ -40,15 +40,16 @@ class PostModel
 		return $res;
 	}
 
-	static public function store($title, $content, $language, $code)
+	static public function store($title, $content, $language, $code, $user_id)
 	{
 		$connect = Database::connect();
-		$query = "call create_post(:title, :content, :language, :code)";
+		$query = "call create_post(:title, :content, :code, :user_id, :language_id)";
 		$stmt = $connect->prepare($query);
 		$stmt->bindParam(":title", $title, PDO::PARAM_STR);
 		$stmt->bindParam(":content", $content, PDO::PARAM_STR);
-		$stmt->bindParam(":language", $language, PDO::PARAM_STR);
 		$stmt->bindParam(":code", $code, PDO::PARAM_STR);
+		$stmt->bindParam(":user_id", $user_id, PDO::PARAM_INT);
+		$stmt->bindParam(":language_id", $language, PDO::PARAM_INT);
 		$result = "";
 		if ($stmt->execute()) {
 			$result = "post created successfully";
@@ -58,11 +59,11 @@ class PostModel
 
 		return $result;
 	}
-	
+
 	static public function delete($id)
 	{
 		$connect = Database::connect();
-		$query = "call delete_post_by_id(:id)";
+		$query = "call delete_post(:id)";
 		$stmt = $connect->prepare($query);
 		$stmt->bindParam(":id", $id, PDO::PARAM_INT);
 
@@ -82,7 +83,7 @@ class PostModel
 	static function update($id, $title, $content)
 	{
 		$connect = Database::connect();
-		$query = "call update_post_by_id(:id, :title, :content)";
+		$query = "call update_post(:id, :title, :content)";
 		$stmt = $connect->prepare($query);
 		$stmt->bindParam(":id", $id, PDO::PARAM_INT);
 		$stmt->bindParam(":title", $title, PDO::PARAM_STR);

@@ -61,11 +61,11 @@ class UserModel
 		}
 	}
 
-	static public function store(string $nom, string $prenom, string $email, string $password)
+	static public function store(string $username, string $email, string $password)
 	{
 		$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-		if (empty($nom) || empty($prenom) || empty($email) || empty($password)) {
+		if (empty($username) || empty($email) || empty($password)) {
 			return "All fields all required";
 		}
 		$connect = Database::connect();
@@ -81,10 +81,9 @@ class UserModel
 		if ($stmt->rowCount() > 0) {
 			return "user deja exists avec cette email: {$email}";
 		}
-		$query = "call create_user(:nom, :prenom, :email, :password)";
+		$query = "call create_user(:username, :email, :password)";
 		$stmt = $connect->prepare($query);
-		$stmt->bindParam(":nom", $nom, PDO::PARAM_STR);
-		$stmt->bindParam(":prenom", $prenom, PDO::PARAM_STR);
+		$stmt->bindParam(":username", $username, PDO::PARAM_STR);
 		$stmt->bindParam(":email", $email, PDO::PARAM_STR);
 		$stmt->bindParam(":password", $hashedPassword, PDO::PARAM_STR);
 		$result = "";
@@ -96,6 +95,53 @@ class UserModel
 			}
 		} catch (PDOException $e) {
 			$result =  "Database error: " . $e->getMessage();
+		}
+		return $result;
+	}
+
+	static function update($id, $username, $email, $password)
+	{
+		$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+		$connect = Database::connect();
+		$query = "call update_user(:id, :username, :email, :password)";
+		$stmt = $connect->prepare($query);
+		$stmt->bindParam(":id", $id, PDO::PARAM_INT);
+		$stmt->bindParam(":username", $username, PDO::PARAM_STR);
+		$stmt->bindParam(":email", $email, PDO::PARAM_STR);
+		$stmt->bindParam(":password", $hashedPassword, PDO::PARAM_STR);
+
+		$result = '';
+
+		if ($stmt->execute()) {
+			if ($stmt->rowCount() > 0) {
+				$result = "user updated successfully";
+			} else {
+				$result = "user with id : {$id} does not exists";
+			}
+		} else {
+			$result = "error updating user";
+		}
+
+		return $result;
+	}
+
+	static public function delete($id)
+	{
+		$connect = Database::connect();
+		$query = "call delete_user(:id)";
+		$stmt = $connect->prepare($query);
+		$stmt->bindParam(":id", $id, PDO::PARAM_INT);
+
+		$result = '';
+		if ($stmt->execute()) {
+			if ($stmt->rowCount() > 0) {
+				$result = "user deleted successfully";
+			} else {
+				$result = "user with id : {$id} does not exist";
+			}
+		} else {
+			$result = "error deleting user";
 		}
 		return $result;
 	}

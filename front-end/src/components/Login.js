@@ -64,7 +64,7 @@ const Login = () => {
           });
         } else {
           sessionStorage.setItem("user", JSON.stringify(response));
-          navigate("/admin/dashboard");
+          navigate("/dashboard");
         }
       } catch (error) {
         console.error("Error occurred:", error);
