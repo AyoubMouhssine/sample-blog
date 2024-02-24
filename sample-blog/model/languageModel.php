@@ -1,9 +1,12 @@
 <?php
 
 namespace LanguageModel;
+require_once "./model/databaseModel.php";
 
 use databaseModel\Database;
+use Exception;
 use PDO;
+use PDOException;
 
 class LanguageModel
 {
@@ -11,74 +14,99 @@ class LanguageModel
 	{
 		$connect = Database::connect();
 		$query = "call get_all_languages()";
-		$posts = $connect->query($query);
-		$result = $posts->fetchAll(PDO::FETCH_ASSOC);
+		$languages = $connect->query($query);
+		$result = $languages->fetchAll(PDO::FETCH_ASSOC);
 
-		if (count($result) > 0) {
+		if (!empty($result)) {
 			return $result;
 		} else {
-			$result = "aucun language trouve";
+			throw new Exception("No languages found");
 		}
-
-		return $result;
 	}
 
 	static public function store($language)
 	{
+		if (empty($language)) {
+			throw new Exception("Language name is required");
+		}
+
 		$connect = Database::connect();
 		$query = "call create_language(:language)";
 		$stmt = $connect->prepare($query);
 		$stmt->bindParam(":language", $language, PDO::PARAM_STR);
-		$result = "";
-		if ($stmt->execute()) {
-			$result = "language created successfully";
-		} else {
-			$result = "faild creating language";
-		}
 
-		return $result;
+		if ($stmt->execute()) {
+			return "Language created successfully";
+		} else {
+			throw new Exception("Failed to create language");
+		}
 	}
 
 	static public function delete($id)
 	{
+		if (empty($id)) {
+			throw new Exception("Language ID is required");
+		}
+
 		$connect = Database::connect();
 		$query = "call delete_language(:id)";
 		$stmt = $connect->prepare($query);
 		$stmt->bindParam(":id", $id, PDO::PARAM_INT);
 
-		$result = '';
 		if ($stmt->execute()) {
 			if ($stmt->rowCount() > 0) {
-				$result = "language deleted successfully";
+				return "Language deleted successfully";
 			} else {
-				$result = "language with id : {$id} does not exist";
+				throw new Exception("Language with ID $id does not exist");
 			}
 		} else {
-			$result = "error deleting language";
+			throw new Exception("Error deleting language");
 		}
-		return $result;
 	}
 
 	static public function update($id, $language_name)
 	{
+		if (empty($id) || empty($language_name)) {
+			throw new Exception("Language ID and name are required");
+		}
+
 		$connect = Database::connect();
 		$query = "call update_language(:id, :language_name)";
 		$stmt = $connect->prepare($query);
 		$stmt->bindParam(":id", $id, PDO::PARAM_INT);
 		$stmt->bindParam(":language_name", $language_name, PDO::PARAM_STR);
 
-		$result = '';
-
 		if ($stmt->execute()) {
 			if ($stmt->rowCount() > 0) {
-				$result = "language updated successfully";
+				return "Language updated successfully";
 			} else {
-				$result = "language with id : {$id} does not exists";
+				throw new Exception("Language with ID $id does not exist");
 			}
 		} else {
-			$result = "error updating language";
+			throw new Exception("Error updating language");
+		}
+	}
+
+	static public function show($id)
+	{
+		if (empty($id)) {
+			throw new Exception("Language ID is required");
 		}
 
-		return $result;
+		$connect = Database::connect();
+		$query = "CALL get_language_by_id(:id)";
+		$stmt = $connect->prepare($query);
+		$stmt->bindParam(":id", $id, PDO::PARAM_INT);
+
+		if ($stmt->execute()) {
+			$language = $stmt->fetch(PDO::FETCH_ASSOC);
+			if ($language) {
+				return $language;
+			} else {
+				throw new Exception("No language found with ID $id");
+			}
+		} else {
+			throw new Exception("Error fetching language");
+		}
 	}
 }

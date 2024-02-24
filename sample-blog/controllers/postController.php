@@ -3,34 +3,69 @@
 namespace PostController;
 
 require_once "./model/postModel.php";
-require_once "./model/databaseModel.php";
 
+use Exception;
 use PostModel\PostModel;
 
 class PostController
 {
-    static public function index()
+    public function index()
     {
-        echo json_encode(PostModel::index());
+        try {
+            $posts = PostModel::index();
+            http_response_code(200);
+            echo json_encode($posts);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => $e->getMessage()]);
+        }
     }
 
-
-    static public function show($id)
+    public function show($id)
     {
-        echo json_encode(PostModel::show($id));
+        try {
+            $post = PostModel::show($id);
+            http_response_code(200);
+            echo json_encode($post);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => $e->getMessage()]);
+        }
     }
 
-    static public function store($title, $content, $language, $code, $user_id)
+    public function store($title, $content, $language, $code, $user_id)
     {
-        echo json_encode(PostModel::store($title, $content, $language, $code, $user_id));
+        try {
+            $result = PostModel::store($title, $content, $language, $code, $user_id);
+            http_response_code(201);
+            echo json_encode($result);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => $e->getMessage()]);
+        }
     }
 
-    static public function delete($id)
+    public function delete($id)
     {
-        echo json_encode(PostModel::delete($id));
+        try {
+            $result = PostModel::delete($id);
+            http_response_code(200);
+            echo json_encode($result);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => $e->getMessage()]);
+        }
     }
-    static public function update($id, $title, $content)
+
+    public function update($id, $title, $content)
     {
-        echo json_encode(PostModel::update($id, $title, $content));
+        try {
+            $result = PostModel::update($id, $title, $content);
+            http_response_code(200);
+            echo json_encode($result);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['error' => $e->getMessage()]);
+        }
     }
 }

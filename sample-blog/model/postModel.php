@@ -2,8 +2,12 @@
 
 namespace PostModel;
 
+require_once "./model/databaseModel.php";
+
 use databaseModel\Database;
+use Exception;
 use PDO;
+use PDOException;
 
 class PostModel
 {
@@ -17,10 +21,8 @@ class PostModel
 		if (count($result) > 0) {
 			return $result;
 		} else {
-			$result = "aucun post trouve";
+			throw new Exception("No posts found");
 		}
-
-		return $result;
 	}
 
 	static public function show($id)
@@ -30,14 +32,14 @@ class PostModel
 		$stmt = $connect->prepare($query);
 		$stmt->bindParam(":id", $id, PDO::PARAM_INT);
 		if (!$stmt->execute()) {
-			return "Aucun post trouve avec l'ID = {$id}";
+			throw new Exception("No post found with ID = $id");
 		}
-		$res = $stmt->fetch(PDO::FETCH_ASSOC);
-		if (!$res) {
-			return "Aucun post trouve avec l'id = {$id}";
+		$post = $stmt->fetch(PDO::FETCH_ASSOC);
+		if (!$post) {
+			throw new Exception("No post found with ID = $id");
 		}
 
-		return $res;
+		return $post;
 	}
 
 	static public function store($title, $content, $language, $code, $user_id)
@@ -50,14 +52,12 @@ class PostModel
 		$stmt->bindParam(":code", $code, PDO::PARAM_STR);
 		$stmt->bindParam(":user_id", $user_id, PDO::PARAM_INT);
 		$stmt->bindParam(":language_id", $language, PDO::PARAM_INT);
-		$result = "";
-		if ($stmt->execute()) {
-			$result = "post created successfully";
-		} else {
-			$result = "faild creating post";
-		}
 
-		return $result;
+		if ($stmt->execute()) {
+			return "Post created successfully";
+		} else {
+			throw new Exception("Failed to create post");
+		}
 	}
 
 	static public function delete($id)
@@ -67,17 +67,15 @@ class PostModel
 		$stmt = $connect->prepare($query);
 		$stmt->bindParam(":id", $id, PDO::PARAM_INT);
 
-		$result = '';
 		if ($stmt->execute()) {
 			if ($stmt->rowCount() > 0) {
-				$result = "post deleted successfully";
+				return "Post deleted successfully";
 			} else {
-				$result = "post with id : {$id} does not exist";
+				throw new Exception("Post with ID $id does not exist");
 			}
 		} else {
-			$result = "error deleting post";
+			throw new Exception("Error deleting post");
 		}
-		return $result;
 	}
 
 	static function update($id, $title, $content)
@@ -89,18 +87,14 @@ class PostModel
 		$stmt->bindParam(":title", $title, PDO::PARAM_STR);
 		$stmt->bindParam(":content", $content, PDO::PARAM_STR);
 
-		$result = '';
-
 		if ($stmt->execute()) {
 			if ($stmt->rowCount() > 0) {
-				$result = "post updated successfully";
+				return "Post updated successfully";
 			} else {
-				$result = "post with id : {$id} does not exists";
+				throw new Exception("Post with ID $id does not exist");
 			}
 		} else {
-			$result = "error updating post";
+			throw new Exception("Error updating post");
 		}
-
-		return $result;
 	}
 }

@@ -3,42 +3,79 @@
 namespace UserController;
 
 require_once "./model/userModel.php";
-require_once "./model/databaseModel.php";
 
+use Exception;
 use UserModel\UserModel;
 
 class UserController
 {
-	static public function index()
+	public function index()
 	{
-		$result = UserModel::index();
-		$users = [];
+		try {
+			$result = UserModel::index();
+			$users = [];
 
-		foreach ($result as $res) {
-			unset($res['password']);
-			array_push($users, $res);
+			foreach ($result as $res) {
+				unset($res['password']); 
+				array_push($users, $res);
+			}
+
+			http_response_code(200);
+			echo json_encode($users);
+		} catch (Exception $e) {
+			http_response_code(500);
+			echo json_encode(['error' => $e->getMessage()]);
 		}
-
-		echo json_encode($users);
 	}
 
-	static public function show($email, $password)
+	public function show($email, $password)
 	{
-		echo json_encode(UserModel::show($email, $password));
+		try {
+			$user = UserModel::show($email, $password);
+			unset($user['password']);
+			http_response_code(200);
+			echo json_encode($user);
+		} catch (Exception $e) {
+			http_response_code(500);
+			echo json_encode(['error' => $e->getMessage()]);
+		}
 	}
 
-	static public function store($username, $email, $password)
+	public function store($username, $email, $password)
 	{
-		echo json_encode(UserModel::store($username, $email, $password));
+		try {
+			$result = UserModel::store($username, $email, $password);
+
+			http_response_code(201);
+			echo json_encode($result);
+		} catch (Exception $e) {
+			http_response_code(500);
+			echo json_encode(['error' => $e->getMessage()]);
+		}
 	}
 
-	static function update($id, $username, $email, $password)
+	public function update($id, $username, $email, $password)
 	{
-		echo json_encode(UserModel::update($id, $username, $email, $password));
+		try {
+			$result = UserModel::update($id, $username, $email, $password);
+
+			http_response_code(200);
+			echo json_encode($result);
+		} catch (Exception $e) {
+			http_response_code(500);
+			echo json_encode(['error' => $e->getMessage()]);
+		}
 	}
 
-	static function delete($id)
+	public function delete($id)
 	{
-		echo json_encode(UserModel::delete($id));
+		try {
+			$result = UserModel::delete($id);
+			http_response_code(200);
+			echo json_encode($result);
+		} catch (Exception $e) {
+			http_response_code(500);
+			echo json_encode(['error' => $e->getMessage()]);
+		}
 	}
 }
