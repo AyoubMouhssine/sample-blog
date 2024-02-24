@@ -17,12 +17,10 @@ The Sample Blog Project is a web application designed to serve as a platform for
 ## Technologies Used
 
 - **Backend**: PHP, MySQL, RESTful API architecture.
-- **Frontend**: HTML, CSS, JavaScript (with frameworks like React, Angular, or Vue.js).
-- **Database**: MySQL or another relational database management system.
-- **Web Server**: Apache, Nginx, or another web server software.
+- **Frontend**: Reactjs.
+- **Database**: MySQL.
 - **Version Control**: Git for source code management.
-- **Deployment**: Deployed on a web hosting service or cloud platform.
-
+- 
 ## Getting Started
 
 To get started with the Sample Blog Project, follow these steps:
